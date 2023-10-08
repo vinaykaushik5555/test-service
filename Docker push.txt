@@ -1,0 +1,14 @@
+commit _ Jenkis -> build -> ecr -> image _> deploy_
+
+Dockerfile
+
+docker build -t test-service:0.1 .
+
+
+docker tag test-service vinaykaushik/test-service:0.1
+
+
+docker push vinaykaushik/test-service:0.1
+
+
+docker tag test-service vinaykaushik/test-service:0.1
