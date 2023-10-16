@@ -12,3 +12,52 @@ docker push vinaykaushik/test-service:0.1
 
 
 docker tag test-service vinaykaushik/test-service:0.1
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RoundRobinInetAddress {
+
+    private List<InetAddress> addresses;
+    private int currentIndex;
+
+    public RoundRobinInetAddress(String domainName) {
+        addresses = resolveDomain(domainName);
+        currentIndex = 0;
+    }
+
+    private List<InetAddress> resolveDomain(String domainName) {
+        List<InetAddress> resolvedAddresses = new ArrayList<>();
+        try {
+            InetAddress[] inetAddresses = InetAddress.getAllByName(domainName);
+            for (InetAddress address : inetAddresses) {
+                resolvedAddresses.add(address);
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return resolvedAddresses;
+    }
+
+    public InetAddress getNextAddress() {
+        if (addresses.isEmpty()) {
+            return null; // Handle when there are no addresses to select from
+        }
+
+        InetAddress address = addresses.get(currentIndex);
+        currentIndex = (currentIndex + 1) % addresses.size();
+        return address;
+    }
+
+    public static void main(String[] args) {
+        String domainName = "example.com"; // Replace with your domain name
+        RoundRobinInetAddress roundRobin = new RoundRobinInetAddress(domainName);
+
+        for (int i = 0; i < 10; i++) {
+            InetAddress address = roundRobin.getNextAddress();
+            System.out.println("Address: " + address);
+        }
+    }
+}
